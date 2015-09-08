@@ -9,7 +9,7 @@ var urlDev;
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";	// ignore self signed certificate error
 
 https.get("https://origin.ieeetvdev.ieee.org/service/Signature?url=https://origin.ieeetvdev.ieee.org/service/SeriesList", function(res) {
-  console.log("Got response: " + res.statusCode);
+  console.log("\nhttps://origin.ieeetvdev.ieee.org/service/Signature?url=https://origin.ieeetvdev.ieee.org/service/SeriesList \n response: " + res.statusCode);
   var seriesListAddress = "";
 
   res.on('data', function(d) {
@@ -26,7 +26,7 @@ https.get("https://origin.ieeetvdev.ieee.org/service/Signature?url=https://origi
 		https.get(urlDev, function(res) {
 			res.setEncoding('utf8');
   
-		  console.log("Got response: " + res.statusCode);
+		  console.log(urlDev, ' \n response: ' + res.statusCode + '\n');
 
 		  var seriesListXML = "";
 
@@ -38,49 +38,25 @@ https.get("https://origin.ieeetvdev.ieee.org/service/Signature?url=https://origi
 		  res.on('end', function() {
 		  	parseXml(seriesListXML, function (err, result) {
 				  seriesListObj = result;
-				  //console.log('Series list object: \n', seriesListObj);
 
-				  var xml = xmlbuilder.create('feed');
+				  var xml = xmlbuilder.create('categories');
 
-				  //forEach
-				  seriesListObj.rsp.serie.forEach(function(item){
-				  	//console.log('\n SERIE ITEM : \n', item);
-				  	var item = xml.ele('item', {
-							'sdImg' : item.image, 
-							'hdImg' : item.image
-						})
-						.ele({
-							'title' : 'title', 
-							'contentType' : 'contentType', 
-							'contentId' : 'contentId'
-						})
-						.up().ele('media')
-						.ele({
-							'streamFormat' : 'mp4',
-							'streamQuality' : 'SD',
-							'streamUrl' : '123'
-						})
-						.up().up().ele('media')
-						.ele({
-							'streamFormat' : 'mp4',
-							'streamQuality' : 'HD',
-							'streamUrl' : '456'
-						})
-						.up().up().ele({
-							'synopsis' : 'synopsis',
-							'genres' : 'genres'
-						});
-
-				  }); // /forEach
+				  seriesListObj.rsp.serie
+				  .forEach(function(item){
+				  	xml.ele('category')
+				  	.ele('id').txt(item.id)
+						.up().ele('title').txt(item.title)
+						.up().ele('description').txt(item.description)
+						.up().ele('sdImg').txt(item.image)
+						.up().ele('hdImg').txt(item.image)
+						.up().ele('feed');
+				  });
 
 				  xml.end({ pretty: true});
 
-				  fs.writeFile('category.xml', xml, function (err) {
+				  fs.writeFile('categories.xml', xml, function (err) {
 					  if (err) throw err;
-					  //console.log('It\'s saved! \n', xml);
 					});
-
-				  console.log('RESULTING XML: \n',xml);
 
 				});
 			});
@@ -91,7 +67,6 @@ https.get("https://origin.ieeetvdev.ieee.org/service/Signature?url=https://origi
 		// /Second level request
 
   }); 
-
 
 }).on('error', function(e) {
   console.log("Got error: " + e.message);
