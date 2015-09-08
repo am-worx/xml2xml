@@ -1,0 +1,16 @@
+{
+  "name": "roku_xml_generator",
+  "version": "0.0.0",
+  "description": "xml generator for Roku channel",
+  "main": "index.js",
+  "scripts": {
+    "test": "test.js"
+  },
+  "author": "Interactivity",
+  "license": "ISC",
+  "dependencies": {
+    "node-xml-lite": "0.0.5",
+    "xml2js": "^0.4.12",
+    "xmlbuilder": "^2.6.4"
+  }
+}
