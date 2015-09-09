@@ -52,9 +52,9 @@ https.get("https://origin.ieeetvdev.ieee.org/service/Signature?url=https://origi
 						.up().ele('feed');
 				  });
 
-				  xml.end({ pretty: true});
+				  var readyXML = xml.end({ pretty: true});
 
-				  fs.writeFile('categories.xml', xml, function (err) {
+				  fs.writeFile('categories.xml', readyXML, function (err) {
 					  if (err) throw err;
 					});
 
